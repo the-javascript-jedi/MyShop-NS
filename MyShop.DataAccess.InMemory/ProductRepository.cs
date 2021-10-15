@@ -67,10 +67,10 @@ namespace MyShop.DataAccess.InMemory
             return products.AsQueryable();
         }
         //delete a product
-        public void Delete(Product product)
+        public void Delete(string Id)
         {
             //look in db to find if product exists
-            Product productToDelete = products.Find(p => p.Id == product.Id);
+            Product productToDelete = products.Find(p => p.Id == Id);
             if (productToDelete != null)
             {
                 products.Remove(productToDelete);
