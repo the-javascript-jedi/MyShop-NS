@@ -1,62 +1,51 @@
-﻿using System;
+﻿using MyShop.Core.Models;
+using MyShop.DataAccess.InMemory;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using MyShop.Core.Models;
-using MyShop.Core.ViewModels;
-using MyShop.DataAccess.InMemory;
 
 namespace MyShop.WebUI.Controllers
 {
-    public class ProductManagerController : Controller
+    public class ProductCategoryManagerController : Controller
     {
-        // ProductRepository - contains our cache memory
-        ProductRepository context;
-        //ProductCategoryRepository - contains our data from cache
-        ProductCategoryRepository productCategories;
-
-        //constructor to initialize product repository and productCategories
-        public ProductManagerController()
+        // ProductCategoryRepository - contains our cache memory
+        ProductCategoryRepository context;
+        //constructor to initialize product repository
+        public ProductCategoryManagerController()
         {
-            context = new ProductRepository();
-            productCategories = new ProductCategoryRepository();
+            context = new ProductCategoryRepository();
         }
 
         // GET: ProductManager
         public ActionResult Index()
         {
             //return list of products - which we get through the collection
-            List<Product> products = context.Collection().ToList();
-            return View(products);
+            List<ProductCategory> productCategoriess = context.Collection().ToList();
+            return View(productCategoriess);
         }
         //Create Product
         //display the page
         public ActionResult Create()
         {
-            //return product with a list of categories to the view
-            //create a refernece to the ProductManagerViewModel
-            ProductManagerViewModel viewModel= new ProductManagerViewModel();
-            //Product product = new Product();
-            viewModel.Product = new Product();
-            //productCategories.Collection(); - we get from db
-            viewModel.ProductCategories = productCategories.Collection();
-            return View(viewModel);
+            ProductCategory productCategory = new ProductCategory();
+            return View(productCategory);
         }
 
         //Create Product Page which will get the Product POST details
         [HttpPost]
-        public ActionResult Create(Product product)
+        public ActionResult Create(ProductCategory productCategory)
         {
             //Check if model validation is valid or just return the error messages
             if (!ModelState.IsValid)
             {
-                return View(product);
+                return View(productCategory);
             }
             else
             {
                 //Insert product to collection
-                context.Insert(product);
+                context.Insert(productCategory);
                 //save changes using commit method
                 context.Commit();
                 //redirect to Index page
@@ -67,27 +56,23 @@ namespace MyShop.WebUI.Controllers
         //Edit Product - Display the Edit Page
         public ActionResult Edit(string Id)
         {
-            Product product = context.Find(Id);
-            if (product == null)
+            ProductCategory productCategory = context.Find(Id);
+            if (productCategory == null)
             {
                 return HttpNotFound();
             }
             else
             {
-                ProductManagerViewModel viewModel = new ProductManagerViewModel();
-                //return the view in a view model
-                viewModel.Product = product;
-                viewModel.ProductCategories = productCategories.Collection();
-                return View(viewModel);
+                return View(productCategory);
             }
         }
         //Edit Product - Receives the Edit details in a POST request
         [HttpPost]
-        public ActionResult Edit(Product product,string Id)
+        public ActionResult Edit(ProductCategory product, string Id)
         {
             //Find the product if it exists
-            Product productToEdit = context.Find(Id);
-            if (product == null)
+            ProductCategory productCategoryToEdit = context.Find(Id);
+            if (productCategoryToEdit == null)
             {
                 return HttpNotFound();
             }
@@ -96,14 +81,10 @@ namespace MyShop.WebUI.Controllers
                 //check for model validation and return validation errors
                 if (!ModelState.IsValid)
                 {
-                return View(product);
+                    return View(productCategoryToEdit);
                 }
                 //if validation is valid apply the fields to be edited to cache 
-                productToEdit.Category = product.Category;
-                productToEdit.Description = product.Description;
-                productToEdit.Image = product.Image;
-                productToEdit.Name = product.Name;
-                productToEdit.Price = product.Price;
+                productCategoryToEdit.Category = product.Category;               
                 //commit the edited changes
                 context.Commit();
                 //redirect to index
@@ -113,14 +94,14 @@ namespace MyShop.WebUI.Controllers
         //Delete Product
         public ActionResult Delete(string Id)
         {
-            Product productToDelete = context.Find(Id);
-            if (productToDelete == null)
+            ProductCategory productCategoryToDelete = context.Find(Id);
+            if (productCategoryToDelete == null)
             {
                 return HttpNotFound();
             }
             else
             {
-                return View(productToDelete);
+                return View(productCategoryToDelete);
             }
         }
         //Confirm Delete-DELETE request
@@ -129,8 +110,8 @@ namespace MyShop.WebUI.Controllers
         [ActionName("Delete")]
         public ActionResult ConfirmDelete(string Id)
         {
-            Product productToDelete = context.Find(Id);
-            if (productToDelete == null)
+            ProductCategory productCategoryToDelete = context.Find(Id);
+            if (productCategoryToDelete == null)
             {
                 return HttpNotFound();
             }
