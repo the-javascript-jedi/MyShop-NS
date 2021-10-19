@@ -1,4 +1,5 @@
-﻿using MyShop.Core.Models;
+﻿using MyShop.Core.Contracts;
+using MyShop.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace MyShop.DataAccess.InMemory
     //to define the class as a generic class, we define a placeholder right after our class declaration
     //<T>- we will reference during the type rest of our code
     //whenever we pass an object it must be inherit from type BaseEntity - so BaseEntity has an id property so whenever we reference an id from a generic type, our generic class knows the class will have an id property - i=>i.Id==t.Id
-    public class InMemoryRepository<T> where T:BaseEntity
+    public class InMemoryRepository<T> : IRepository<T> where T : BaseEntity
     {
         //create an object cache
         ObjectCache cache = MemoryCache.Default;
@@ -46,7 +47,7 @@ namespace MyShop.DataAccess.InMemory
         //Update
         public void Update(T t)
         {
-            T tToUpdate = items.Find(i=>i.Id==t.Id);
+            T tToUpdate = items.Find(i => i.Id == t.Id);
             if (tToUpdate != null)
             {
                 tToUpdate = t;
@@ -59,8 +60,8 @@ namespace MyShop.DataAccess.InMemory
         //Find
         public T Find(string Id)
         {
-            T t = items.Find(i=>i.Id==Id);
-            if (t!=null)
+            T t = items.Find(i => i.Id == Id);
+            if (t != null)
             {
                 return t;
             }
@@ -87,6 +88,6 @@ namespace MyShop.DataAccess.InMemory
             {
                 throw new Exception(className + " Not Found");
             }
-        }
+        }        
     }
 }

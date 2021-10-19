@@ -1,4 +1,5 @@
-﻿using MyShop.Core.Models;
+﻿using MyShop.Core.Contracts;
+using MyShop.Core.Models;
 using MyShop.DataAccess.InMemory;
 using System;
 using System.Collections.Generic;
@@ -12,16 +13,27 @@ namespace MyShop.WebUI.Controllers
     {
         // ProductCategoryRepository - contains our cache memory
         //ProductCategoryRepository context;
+
         //use the generic class
-        InMemoryRepository<ProductCategory> context;
+        //InMemoryRepository<ProductCategory> context;
+
+        //using Interfaces
+        IRepository<ProductCategory> context;
 
         //constructor to initialize product repository
-        public ProductCategoryManagerController()
+        //public ProductCategoryManagerController()
+        //{
+        //    //context = new ProductCategoryRepository();
+        //    //use the generic class
+        //    context = new InMemoryRepository<ProductCategory>();
+        //}
+
+        //Inject the interface to the constructor
+        public ProductCategoryManagerController(IRepository<ProductCategory> context)
         {
-            //context = new ProductCategoryRepository();
-            //use the generic class
-            context = new InMemoryRepository<ProductCategory>();
+            this.context = context;
         }
+
 
         // GET: ProductManager
         public ActionResult Index()

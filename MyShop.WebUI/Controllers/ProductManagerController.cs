@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using MyShop.Core.Contracts;
 using MyShop.Core.Models;
 using MyShop.Core.ViewModels;
 using MyShop.DataAccess.InMemory;
@@ -17,17 +18,36 @@ namespace MyShop.WebUI.Controllers
         //ProductCategoryRepository - contains our data from cache
         ProductCategoryRepository productCategories;
         */
+        
+        /// <summary>
         //using Generic Classes
-        InMemoryRepository<Product> context;
-        InMemoryRepository<ProductCategory> productCategories;
+        /// </summary>
+        //InMemoryRepository<Product> context;
+        //InMemoryRepository<ProductCategory> productCategories;
+        
+        /// <summary>
+        //using Interfaces
+        //even though the declaration has changed here, the rest of the code still works fine because we are then instantiating our concrete implementation of that repository down here.
+        /// </summary>
+        IRepository<Product> context;
+        IRepository<ProductCategory> productCategories;
 
         //constructor to initialize product repository and productCategories
-        public ProductManagerController()
+        //Instantiating the Classes in the constructor
+        //public ProductManagerController()
+        //{
+        //    context = new InMemoryRepository<Product>();
+        //    productCategories = new InMemoryRepository<ProductCategory>();            
+        //}
+        //Instantiating the Interfaces in the constructor
+        //we need to inject the interface methods to the constructor, previously we were not using interfaces - we were instantiating an object from the class
+        //everytime we create an instance of our ProductManagerController, it must be injected with a class that implements <Product> and a class that implements <ProductCategory>
+        public ProductManagerController(IRepository<Product> productContext,IRepository<ProductCategory> productCategoryContext)
         {
-            context = new InMemoryRepository<Product>();
-            productCategories = new InMemoryRepository<ProductCategory>();
+            //we refer the interfaces instead of creating instances of the class
+            context = productContext;
+            productCategories = productCategoryContext;            
         }
-
         // GET: ProductManager
         public ActionResult Index()
         {
@@ -41,7 +61,7 @@ namespace MyShop.WebUI.Controllers
         {
             //return product with a list of categories to the view
             //create a refernece to the ProductManagerViewModel
-            ProductManagerViewModel viewModel= new ProductManagerViewModel();
+            ProductManagerViewModel viewModel = new ProductManagerViewModel();
             //Product product = new Product();
             viewModel.Product = new Product();
             //productCategories.Collection(); - we get from db
@@ -88,7 +108,7 @@ namespace MyShop.WebUI.Controllers
         }
         //Edit Product - Receives the Edit details in a POST request
         [HttpPost]
-        public ActionResult Edit(Product product,string Id)
+        public ActionResult Edit(Product product, string Id)
         {
             //Find the product if it exists
             Product productToEdit = context.Find(Id);
@@ -101,7 +121,7 @@ namespace MyShop.WebUI.Controllers
                 //check for model validation and return validation errors
                 if (!ModelState.IsValid)
                 {
-                return View(product);
+                    return View(product);
                 }
                 //if validation is valid apply the fields to be edited to cache 
                 productToEdit.Category = product.Category;
