@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 namespace MyShop.Core.Models
 {
-    public class Product
+    public class Product:BaseEntity
     {
-        public string Id { get; set; }
+        //since we are inheriting from BaseEntity, - The ID is created in BaseEntity class - we can comment the ID 
+        //public string Id { get; set; }
         //Add a max string length of 20 to the model
         [StringLength(20)]
         [DisplayName("Product Name")]
@@ -22,9 +23,9 @@ namespace MyShop.Core.Models
         public string Image { get; set; }
         
         //we create a constructor so that whenever we create a Product model we automatically generate an id
-        public Product()
+        /*public Product()
         {
             this.Id = Guid.NewGuid().ToString();
-        }
+        }*/
     }                                 
 }
